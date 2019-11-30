@@ -26,3 +26,7 @@ def create_source_destination_list(pairs):
 class PathPair:
     _source: Path  # ファイルまたはディレクトリを指す
     _destination: Path  # ファイルまたはディレクトリを指す
+
+    def list_targets(self):
+        pair = create_source_destination_pair(self._source, self._destination)
+        return create_source_destination_list([pair])

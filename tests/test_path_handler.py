@@ -54,8 +54,32 @@ class CreateSourceDestinationListTestCase(TestCase):
 
 
 class PathPairTestCase(TestCase):
+    def setUp(self):
+        self.source, self.destination = (
+            MagicMock(spec=Path),
+            MagicMock(spec=Path),
+        )
+
     def test_init(self):
-        source, destination = MagicMock(spec=Path), MagicMock(spec=Path)
-        actual = ph.PathPair(source, destination)
-        self.assertEqual(actual._source, source)
-        self.assertEqual(actual._destination, destination)
+        actual = ph.PathPair(self.source, self.destination)
+        self.assertEqual(actual._source, self.source)
+        self.assertEqual(actual._destination, self.destination)
+
+    @patch("myimageprocessor.path_handler.create_source_destination_list")
+    @patch("myimageprocessor.path_handler.create_source_destination_pair")
+    def test_list_targets(
+        self, create_source_destination_pair, create_source_destination_list
+    ):
+        path_pair = ph.PathPair(self.source, self.destination)
+        source_destination_pair = create_source_destination_pair.return_value
+
+        actual = path_pair.list_targets()
+        self.assertEqual(
+            create_source_destination_pair.call_args_list,
+            [call(self.source, self.destination)],
+        )
+        self.assertEqual(
+            create_source_destination_list.call_args_list,
+            [call([source_destination_pair])],
+        )
+        self.assertEqual(actual, create_source_destination_list.return_value)
