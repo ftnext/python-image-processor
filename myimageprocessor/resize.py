@@ -8,5 +8,5 @@ class ResizeCalculator:
     _limit: int
 
     def needs_resize(self):
-        width, _ = self._now
-        return width > self._limit
+        width, height = self._now
+        return width > self._limit and height > self._limit
