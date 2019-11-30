@@ -3,11 +3,11 @@ from typing import Tuple
 
 
 @dataclass
-class ResizeCalculator:
+class ShrinkSizeCalculator:
     _now: Tuple[int, int]
     _limit: int
 
-    def needs_resize(self):
+    def needs_shrink(self):
         width, height = self._now
         return width > self._limit and height > self._limit
 
@@ -22,5 +22,5 @@ class ResizeCalculator:
         return (new_width, new_height)
 
 
-def create_resize_calculator(size, limit):
-    return ResizeCalculator(size, limit)
+def create_shrink_size_calculator(size, limit):
+    return ShrinkSizeCalculator(size, limit)
