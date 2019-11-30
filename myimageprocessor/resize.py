@@ -17,3 +17,6 @@ class ResizeCalculator:
             new_width = self._limit
             new_height = int((self._limit / width) * height)
             return (new_width, new_height)
+        new_width = int((self._limit / height) * width)
+        new_height = self._limit
+        return (new_width, new_height)
