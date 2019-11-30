@@ -24,3 +24,9 @@ class ResizeCalculatorTestCase(TestCase):
         resize_calculator = r.ResizeCalculator(size, self.limit)
         actual = resize_calculator.needs_resize()
         self.assertFalse(actual)
+
+    def test_needs_resize_height_smaller(self):
+        size = (400, 250)
+        resize_calculator = r.ResizeCalculator(size, self.limit)
+        actual = resize_calculator.needs_resize()
+        self.assertFalse(actual)
