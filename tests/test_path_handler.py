@@ -6,12 +6,27 @@ import myimageprocessor.path_handler as ph
 
 
 class SourceDestinationPairTestCase(TestCase):
+    def setUp(self):
+        self.source_path = MagicMock(spec=Path)
+        self.destination_path = MagicMock(spec=Path)
+        self.pair = ph.SourceDestinationPair(
+            self.source_path, self.destination_path
+        )
+
     def test_init(self):
-        source_path = MagicMock(spec=Path)
-        destination_path = MagicMock(spec=Path)
-        actual = ph.SourceDestinationPair(source_path, destination_path)
-        self.assertEqual(actual._source, source_path)
-        self.assertEqual(actual._destination, destination_path)
+        actual = ph.SourceDestinationPair(
+            self.source_path, self.destination_path
+        )
+        self.assertEqual(actual._source, self.source_path)
+        self.assertEqual(actual._destination, self.destination_path)
+
+    def test_source_property(self):
+        actual = self.pair.source
+        self.assertEqual(actual, self.source_path)
+
+    def test_destination_property(self):
+        actual = self.pair.destination
+        self.assertEqual(actual, self.destination_path)
 
 
 class CreateSourceDestinationPairTestCase(TestCase):
@@ -83,3 +98,14 @@ class PathPairTestCase(TestCase):
             [call([source_destination_pair])],
         )
         self.assertEqual(actual, create_source_destination_list.return_value)
+
+
+class CreatePathPairTestCase(TestCase):
+    @patch(
+        "myimageprocessor.path_handler.PathPair.__init__", return_value=None
+    )
+    def test(self, init_mock):
+        source, destination = MagicMock(spec=Path), MagicMock(spec=Path)
+        actual = ph.create_path_pair(source, destination)
+        self.assertEqual(init_mock.call_args_list, [call(source, destination)])
+        self.assertIsInstance(actual, ph.PathPair)

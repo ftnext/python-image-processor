@@ -8,6 +8,14 @@ class SourceDestinationPair:
     _source: Path
     _destination: Path
 
+    @property
+    def source(self):
+        return self._source
+
+    @property
+    def destination(self):
+        return self._destination
+
 
 def create_source_destination_pair(source, destination):
     return SourceDestinationPair(source, destination)
@@ -30,3 +38,7 @@ class PathPair:
     def list_targets(self):
         pair = create_source_destination_pair(self._source, self._destination)
         return create_source_destination_list([pair])
+
+
+def create_path_pair(source, destination):
+    return PathPair(source, destination)
