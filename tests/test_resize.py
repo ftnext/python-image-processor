@@ -30,3 +30,9 @@ class ResizeCalculatorTestCase(TestCase):
         resize_calculator = r.ResizeCalculator(size, self.limit)
         actual = resize_calculator.needs_resize()
         self.assertFalse(actual)
+
+    def test_needs_resize_boundary(self):
+        size = (301, 300)
+        resize_calculator = r.ResizeCalculator(size, self.limit)
+        actual = resize_calculator.needs_resize()
+        self.assertFalse(actual)
