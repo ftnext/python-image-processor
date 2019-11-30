@@ -47,3 +47,15 @@ class ResizeCalculatorTestCase(TestCase):
         resize_calculator = r.ResizeCalculator(size, limit)
         actual = resize_calculator.shrink_size()
         self.assertEqual(actual, (300, 200))
+
+    def test_shrink_size_check_int(self):
+        """intで返っていることを確認する
+        
+        (400 / 700) * 500 = 285.71
+        四捨五入でなく、intによる切り捨てで285となる
+        """
+        size = (500, 700)
+        limit = 400
+        resize_calculator = r.ResizeCalculator(size, limit)
+        actual = resize_calculator.shrink_size()
+        self.assertEqual(actual, (285, 400))
