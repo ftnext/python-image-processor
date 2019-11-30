@@ -20,3 +20,7 @@ class ResizeCalculator:
         new_width = int((self._limit / height) * width)
         new_height = self._limit
         return (new_width, new_height)
+
+
+def create_resize_calculator(size, limit):
+    return ResizeCalculator(size, limit)

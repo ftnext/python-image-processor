@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import call, MagicMock, patch
 
 import myimageprocessor.resize as r
 
@@ -59,3 +60,14 @@ class ResizeCalculatorTestCase(TestCase):
         resize_calculator = r.ResizeCalculator(size, limit)
         actual = resize_calculator.shrink_size()
         self.assertEqual(actual, (285, 400))
+
+
+class CreateResizeCalculatorTestCase(TestCase):
+    @patch(
+        "myimageprocessor.resize.ResizeCalculator.__init__", return_value=None
+    )
+    def test(self, init_mock):
+        size, limit = MagicMock(), MagicMock()
+        actual = r.create_resize_calculator(size, limit)
+        self.assertTrue(isinstance(actual, r.ResizeCalculator))
+        self.assertEqual(init_mock.call_args_list, [call(size, limit)])
