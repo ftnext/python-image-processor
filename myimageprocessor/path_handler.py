@@ -9,9 +9,17 @@ class SourceDestinationPair:
     _destination: Path
 
 
+def create_source_destination_pair(source, destination):
+    return SourceDestinationPair(source, destination)
+
+
 @dataclass
 class SourceDestinationList:
     _pairs: List[SourceDestinationPair]
+
+
+def create_source_destination_list(pairs):
+    return SourceDestinationList(pairs)
 
 
 @dataclass
