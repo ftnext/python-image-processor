@@ -51,7 +51,7 @@ class ShrinkSizeCalculatorTestCase(TestCase):
 
     def test_shrink_size_check_int(self):
         """intで返っていることを確認する
-        
+
         (400 / 700) * 500 = 285.71
         四捨五入でなく、intによる切り捨てで285となる
         """
