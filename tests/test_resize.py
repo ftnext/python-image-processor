@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest import TestCase
 from unittest.mock import call, MagicMock, patch
 
@@ -75,11 +76,51 @@ class CreateShrinkSizeCalculatorTestCase(TestCase):
 
 
 class ShrinkProcessorTestCase(TestCase):
+    def setUp(self):
+        self.shrink_size = MagicMock(spec=int)
+
     def test_init(self):
         source_destination_file_pair = MagicMock(spec=tuple)
-        shrink_size = MagicMock(spec=int)
-        actual = r.ShrinkProcessor(source_destination_file_pair, shrink_size)
+        actual = r.ShrinkProcessor(
+            source_destination_file_pair, self.shrink_size
+        )
         self.assertEqual(
             actual._source_destination_pair, source_destination_file_pair
         )
-        self.assertEqual(actual._shrink_size, shrink_size)
+        self.assertEqual(actual._shrink_size, self.shrink_size)
+
+    @patch("myimageprocessor.resize.create_shrink_size_calculator")
+    @patch("myimageprocessor.resize.Image.open")
+    def test_process(self, image_open, create_shrink_size_calculator):
+        source_file_path = MagicMock(spec=Path)
+        destination_file_path = MagicMock(spec=Path)
+        source_destination_file_pair = (
+            source_file_path,
+            destination_file_path,
+        )
+        image = image_open.return_value
+        shrink_size_calculator = create_shrink_size_calculator.return_value
+        shrink_size_calculator.needs_shrink.return_value = True
+        shrinked_size = shrink_size_calculator.shrink_size.return_value
+        resized_image = image.resize.return_value
+
+        shrink_processor = r.ShrinkProcessor(
+            source_destination_file_pair, self.shrink_size
+        )
+        shrink_processor.process()
+
+        self.assertEqual(image_open.call_args_list, [call(source_file_path)])
+        self.assertEqual(
+            create_shrink_size_calculator.call_args_list,
+            [call(image.size, self.shrink_size)],
+        )
+        self.assertEqual(
+            shrink_size_calculator.needs_shrink.call_args_list, [call()]
+        )
+        self.assertEqual(
+            shrink_size_calculator.shrink_size.call_args_list, [call()]
+        )
+        self.assertEqual(image.resize.call_args_list, [call(shrinked_size)])
+        self.assertEqual(
+            resized_image.save.call_args_list, [call(destination_file_path)]
+        )

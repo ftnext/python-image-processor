@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Tuple
 
+from PIL import Image
+
 
 @dataclass
 class ShrinkSizeCalculator:
@@ -31,3 +33,14 @@ def create_shrink_size_calculator(size, limit):
 class ShrinkProcessor:
     _source_destination_pair: Tuple[Path, Path]
     _shrink_size: int
+
+    def process(self):
+        source_path, destination_path = self._source_destination_pair
+        image = Image.open(source_path)
+        shrink_size_calculator = create_shrink_size_calculator(
+            image.size, self._shrink_size
+        )
+        if shrink_size_calculator.needs_shrink():
+            shrinked_size = shrink_size_calculator.shrink_size()
+            resized_image = image.resize(shrinked_size)
+            resized_image.save(destination_path)
