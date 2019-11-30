@@ -72,3 +72,14 @@ class CreateShrinkSizeCalculatorTestCase(TestCase):
         actual = r.create_shrink_size_calculator(size, limit)
         self.assertTrue(isinstance(actual, r.ShrinkSizeCalculator))
         self.assertEqual(init_mock.call_args_list, [call(size, limit)])
+
+
+class ShrinkProcessorTestCase(TestCase):
+    def test_init(self):
+        source_destination_file_pair = MagicMock(spec=tuple)
+        shrink_size = MagicMock(spec=int)
+        actual = r.ShrinkProcessor(source_destination_file_pair, shrink_size)
+        self.assertEqual(
+            actual._source_destination_pair, source_destination_file_pair
+        )
+        self.assertEqual(actual._shrink_size, shrink_size)

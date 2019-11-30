@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Tuple
 
 
@@ -24,3 +25,9 @@ class ShrinkSizeCalculator:
 
 def create_shrink_size_calculator(size, limit):
     return ShrinkSizeCalculator(size, limit)
+
+
+@dataclass
+class ShrinkProcessor:
+    _source_destination_pair: Tuple[Path, Path]
+    _shrink_size: int
