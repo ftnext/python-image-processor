@@ -124,3 +124,20 @@ class ShrinkProcessorTestCase(TestCase):
         self.assertEqual(
             resized_image.save.call_args_list, [call(destination_file_path)]
         )
+
+
+class CreateShrinkProcessor(TestCase):
+    @patch(
+        "myimageprocessor.resize.ShrinkProcessor.__init__", return_value=None
+    )
+    def test_init(self, init_mock):
+        source_destination_pair = MagicMock(spec=tuple)
+        shrink_size = MagicMock(spec=int)
+        actual = r.create_shrink_processor(
+            source_destination_pair, shrink_size
+        )
+        self.assertTrue(isinstance(actual, r.ShrinkProcessor))
+        self.assertEqual(
+            init_mock.call_args_list,
+            [call(source_destination_pair, shrink_size)],
+        )

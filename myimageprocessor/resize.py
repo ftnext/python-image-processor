@@ -44,3 +44,7 @@ class ShrinkProcessor:
             shrinked_size = shrink_size_calculator.shrink_size()
             resized_image = image.resize(shrinked_size)
             resized_image.save(destination_path)
+
+
+def create_shrink_processor(source_destination_pair, shrink_size):
+    return ShrinkProcessor(source_destination_pair, shrink_size)
