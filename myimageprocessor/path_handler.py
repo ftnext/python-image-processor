@@ -25,6 +25,9 @@ def create_source_destination_pair(source, destination):
 class SourceDestinationList:
     _pairs: List[SourceDestinationPair]
 
+    def __iter__(self):
+        return iter(self._pairs)
+
 
 def create_source_destination_list(pairs):
     return SourceDestinationList(pairs)

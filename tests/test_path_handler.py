@@ -42,13 +42,23 @@ class CreateSourceDestinationPairTestCase(TestCase):
 
 
 class SourceDestinationListTestCase(TestCase):
+    def setUp(self):
+        self.pair0 = MagicMock(spec=ph.SourceDestinationPair)
+        self.pair1 = MagicMock(spec=ph.SourceDestinationPair)
+        self.source_destination_pairs = [self.pair0, self.pair1]
+
     def test_init(self):
-        source_destination_pairs = [
-            MagicMock(spec=ph.SourceDestinationPair),
-            MagicMock(spec=ph.SourceDestinationPair),
-        ]
-        actual = ph.SourceDestinationList(source_destination_pairs)
-        self.assertEqual(actual._pairs, source_destination_pairs)
+        actual = ph.SourceDestinationList(self.source_destination_pairs)
+        self.assertEqual(actual._pairs, self.source_destination_pairs)
+
+    def test_iter(self):
+        source_destination_list = ph.SourceDestinationList(
+            self.source_destination_pairs
+        )
+        actual = [pair for pair in source_destination_list]
+        self.assertEqual(len(actual), 2)
+        self.assertEqual(actual[0], self.pair0)
+        self.assertEqual(actual[1], self.pair1)
 
 
 class CreateSourceDestinationListTestCase(TestCase):
