@@ -6,3 +6,6 @@ from typing import Tuple
 class ResizeCalculator:
     _now: Tuple[int, int]
     _limit: int
+
+    def needs_resize(self):
+        return True
