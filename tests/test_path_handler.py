@@ -19,3 +19,11 @@ class SourceDestinationListTestCase(TestCase):
         source_destination_pairs = [MagicMock(), MagicMock()]
         actual = ph.SourceDestinationList(source_destination_pairs)
         self.assertEqual(actual._pairs, source_destination_pairs)
+
+
+class PathPairTestCase(TestCase):
+    def test_init(self):
+        source, destination = MagicMock(spec=Path), MagicMock(spec=Path)
+        actual = ph.PathPair(source, destination)
+        self.assertEqual(actual._source, source)
+        self.assertEqual(actual._destination, destination)

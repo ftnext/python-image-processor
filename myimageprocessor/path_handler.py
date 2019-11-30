@@ -12,3 +12,9 @@ class SourceDestinationPair:
 @dataclass
 class SourceDestinationList:
     _pairs: List[SourceDestinationPair]
+
+
+@dataclass
+class PathPair:
+    _source: Path  # ファイルまたはディレクトリを指す
+    _destination: Path  # ファイルまたはディレクトリを指す
