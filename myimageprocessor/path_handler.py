@@ -39,9 +39,16 @@ class PathPair:
     _destination: Path  # ファイルまたはディレクトリを指す
 
     def list_targets(self):
+        if self._destination.is_dir():
+            dest_path = self._destination / self._source.name
+            pair = create_source_destination_pair(self._source, dest_path)
+            return create_source_destination_list([pair])
         pair = create_source_destination_pair(self._source, self._destination)
         return create_source_destination_list([pair])
 
 
-def create_path_pair(source, destination):
+def create_path_pair(source, destination=None):
+    if not destination:
+        destination = Path.cwd()
+    # sourceがディレクトリ、destinationがファイルのとき、エラーを上げる
     return PathPair(source, destination)

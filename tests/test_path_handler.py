@@ -92,9 +92,11 @@ class PathPairTestCase(TestCase):
 
     @patch("myimageprocessor.path_handler.create_source_destination_list")
     @patch("myimageprocessor.path_handler.create_source_destination_pair")
-    def test_list_targets(
+    def test_list_targets_source_and_destination_are_file(
         self, create_source_destination_pair, create_source_destination_list
     ):
+        self.source.is_dir.return_value = False
+        self.destination.is_dir.return_value = False
         path_pair = ph.PathPair(self.source, self.destination)
         source_destination_pair = create_source_destination_pair.return_value
 
@@ -102,6 +104,28 @@ class PathPairTestCase(TestCase):
         self.assertEqual(
             create_source_destination_pair.call_args_list,
             [call(self.source, self.destination)],
+        )
+        self.assertEqual(
+            create_source_destination_list.call_args_list,
+            [call([source_destination_pair])],
+        )
+        self.assertEqual(actual, create_source_destination_list.return_value)
+
+    @patch("myimageprocessor.path_handler.create_source_destination_list")
+    @patch("myimageprocessor.path_handler.create_source_destination_pair")
+    def test_list_targets_source_file_destination_directory(
+        self, create_source_destination_pair, create_source_destination_list
+    ):
+        self.source.is_dir.return_value = False
+        self.destination.is_dir.return_value = True
+        path_pair = ph.PathPair(self.source, self.destination)
+        source_destination_pair = create_source_destination_pair.return_value
+
+        actual = path_pair.list_targets()
+
+        self.assertEqual(
+            create_source_destination_pair.call_args_list,
+            [call(self.source, self.destination / self.source.name)],
         )
         self.assertEqual(
             create_source_destination_list.call_args_list,
@@ -118,4 +142,17 @@ class CreatePathPairTestCase(TestCase):
         source, destination = MagicMock(spec=Path), MagicMock(spec=Path)
         actual = ph.create_path_pair(source, destination)
         self.assertEqual(init_mock.call_args_list, [call(source, destination)])
+        self.assertIsInstance(actual, ph.PathPair)
+
+    @patch("myimageprocessor.path_handler.Path.cwd")
+    @patch(
+        "myimageprocessor.path_handler.PathPair.__init__", return_value=None
+    )
+    def test_not_specified_destination(self, init_mock, path_cwd_mock):
+        source = MagicMock(spec=Path)
+        cwd_path = path_cwd_mock.return_value
+
+        actual = ph.create_path_pair(source)
+
+        self.assertEqual(init_mock.call_args_list, [call(source, cwd_path)])
         self.assertIsInstance(actual, ph.PathPair)
