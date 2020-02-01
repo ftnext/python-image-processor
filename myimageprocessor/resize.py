@@ -3,8 +3,6 @@ from typing import Tuple
 
 from PIL import Image
 
-import myimageprocessor.path_handler as ph
-
 
 @dataclass
 class ShrinkSizeCalculator:
@@ -32,12 +30,15 @@ def create_shrink_size_calculator(size, limit):
 
 @dataclass
 class ShrinkProcessor:
-    _source_destination_pair: ph.SourceDestinationPair
     _shrink_size: int
 
-    def process(self):
-        source_path = self._source_destination_pair.source
-        destination_path = self._source_destination_pair.destination
+    def process(self, target_pair_list):
+        for target_pair in target_pair_list:
+            self._process_per_unit(target_pair)
+
+    def _process_per_unit(self, target_pair):
+        source_path = target_pair.source
+        destination_path = target_pair.destination
         image = Image.open(source_path)
         shrink_size_calculator = create_shrink_size_calculator(
             image.size, self._shrink_size
@@ -48,5 +49,5 @@ class ShrinkProcessor:
             resized_image.save(destination_path)
 
 
-def create_shrink_processor(source_destination_pair, shrink_size):
-    return ShrinkProcessor(source_destination_pair, shrink_size)
+def create_shrink_processor(shrink_size):
+    return ShrinkProcessor(shrink_size)

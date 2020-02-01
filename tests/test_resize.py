@@ -80,29 +80,46 @@ class ShrinkProcessorTestCase(TestCase):
         self.shrink_size = MagicMock(spec=int)
 
     def test_init(self):
-        source_destination_file_pair = MagicMock(spec=ph.PathPair)
-        actual = r.ShrinkProcessor(
-            source_destination_file_pair, self.shrink_size
-        )
-        self.assertEqual(
-            actual._source_destination_pair, source_destination_file_pair
-        )
+        actual = r.ShrinkProcessor(self.shrink_size)
         self.assertEqual(actual._shrink_size, self.shrink_size)
+
+    @patch("myimageprocessor.resize.ShrinkProcessor._process_per_unit")
+    def test_process(self, process_per_unit):
+        source_destination_file_pair1 = MagicMock(
+            spec=ph.SourceDestinationPair
+        )
+        source_destination_file_pair2 = MagicMock(
+            spec=ph.SourceDestinationPair
+        )
+        source_destination_file_pairs = [
+            source_destination_file_pair1,
+            source_destination_file_pair2,
+        ]
+        targets = ph.SourceDestinationList(source_destination_file_pairs)
+        shrink_processor = r.ShrinkProcessor(self.shrink_size)
+
+        shrink_processor.process(targets)
+
+        self.assertEqual(
+            process_per_unit.call_args_list,
+            [
+                call(source_destination_file_pair1),
+                call(source_destination_file_pair2),
+            ],
+        )
 
     @patch("myimageprocessor.resize.create_shrink_size_calculator")
     @patch("myimageprocessor.resize.Image.open")
-    def test_process(self, image_open, create_shrink_size_calculator):
+    def test_process_per_unit(self, image_open, create_shrink_size_calculator):
         source_destination_file_pair = MagicMock(spec=ph.SourceDestinationPair)
         image = image_open.return_value
         shrink_size_calculator = create_shrink_size_calculator.return_value
         shrink_size_calculator.needs_shrink.return_value = True
         shrinked_size = shrink_size_calculator.shrink_size.return_value
         resized_image = image.resize.return_value
+        shrink_processor = r.ShrinkProcessor(self.shrink_size)
 
-        shrink_processor = r.ShrinkProcessor(
-            source_destination_file_pair, self.shrink_size
-        )
-        shrink_processor.process()
+        shrink_processor._process_per_unit(source_destination_file_pair)
 
         self.assertEqual(
             image_open.call_args_list,
@@ -130,13 +147,9 @@ class CreateShrinkProcessor(TestCase):
         "myimageprocessor.resize.ShrinkProcessor.__init__", return_value=None
     )
     def test_init(self, init_mock):
-        source_destination_pair = MagicMock(spec=tuple)
         shrink_size = MagicMock(spec=int)
-        actual = r.create_shrink_processor(
-            source_destination_pair, shrink_size
-        )
+        actual = r.create_shrink_processor(shrink_size)
         self.assertIsInstance(actual, r.ShrinkProcessor)
         self.assertEqual(
-            init_mock.call_args_list,
-            [call(source_destination_pair, shrink_size)],
+            init_mock.call_args_list, [call(shrink_size)],
         )
