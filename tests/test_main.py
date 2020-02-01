@@ -19,8 +19,7 @@ class MainTestCase(TestCase):
 
         self.assertEqual(parse_args.call_args_list, [call()])
         self.assertEqual(
-            create_path_pair.call_args_list,
-            [call(args.source, args.source.name)],
+            create_path_pair.call_args_list, [call(args.source)],
         )
         self.assertEqual(path_pair.list_targets.call_args_list, [call()])
         self.assertEqual(

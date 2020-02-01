@@ -7,7 +7,7 @@ SHRINK_SIZE = 300
 
 def main(shrink_size=SHRINK_SIZE):
     args = p.parse_args()
-    path_pair = ph.create_path_pair(args.source, args.source.name)
+    path_pair = ph.create_path_pair(args.source)
     targets = path_pair.list_targets()
     processor = r.create_shrink_processor(shrink_size)
     processor.process(targets)
