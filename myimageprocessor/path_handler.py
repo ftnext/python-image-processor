@@ -36,26 +36,26 @@ def create_source_destination_list(pairs):
 @dataclass
 class PathPair:
     _source: Path  # ファイルまたはディレクトリを指す
-    _destination: Path  # ファイルまたはディレクトリを指す
+    _destination: Path  # ディレクトリを指す（現時点ではカレントディレクトリ）
 
     def list_targets(self):
-        if self._destination.is_dir():
-            if self._source.is_file():
-                dest_path = self._destination / self._source.name
-                pair = create_source_destination_pair(self._source, dest_path)
-                return create_source_destination_list([pair])
-            pairs = []
-            for source_path in self._source.iterdir():
-                if not source_path.name.endswith((".jpg", ".png")):
-                    continue
-                destination_path = self._destination / source_path.name
-                pair = create_source_destination_pair(
-                    source_path, destination_path
-                )
-                pairs.append(pair)
-            return create_source_destination_list(pairs)
-        pair = create_source_destination_pair(self._source, self._destination)
-        return create_source_destination_list([pair])
+        assert self._destination.is_dir()
+        if self._source.is_file():
+            dest_path = self._destination / self._source.name
+            pair = create_source_destination_pair(self._source, dest_path)
+            return create_source_destination_list([pair])
+        pairs = []
+        dest_directory = self._destination / self._source.name
+        dest_directory.mkdir(exist_ok=True)
+        for source_path in self._source.iterdir():
+            if not source_path.name.endswith((".jpg", ".png")):
+                continue
+            destination_path = dest_directory / source_path.name
+            pair = create_source_destination_pair(
+                source_path, destination_path
+            )
+            pairs.append(pair)
+        return create_source_destination_list(pairs)
 
 
 def create_path_pair(source, destination=None):
